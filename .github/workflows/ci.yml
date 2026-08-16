@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: build (${{ matrix.cc }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compilation
+        run: make CC=${{ matrix.cc }}
+
+      - name: Le binaire existe et est executable
+        run: test -x ./ft_ls
+
+      - name: Pas de relink inutile
+        run: |
+          out=$(make CC=${{ matrix.cc }})
+          printf '%s\n' "$out"
+          if printf '%s' "$out" | grep -qiE 'compiling|building'; then
+            echo "::error::make recompile alors que rien n'a change"
+            exit 1
+          fi
+
+      - name: make clean supprime les objets mais garde le binaire
+        run: |
+          make clean
+          test ! -d .build
+          test -x ./ft_ls
+
+      - name: make fclean supprime tout
+        run: |
+          make fclean
+          test ! -d .build
+          test ! -e ./ft_ls
+
+      - name: make re reconstruit depuis zero
+        run: |
+          make re CC=${{ matrix.cc }}
+          test -x ./ft_ls
+
+      - name: fclean laisse le depot propre
+        run: |
+          make fclean
+          git status --porcelain > /tmp/dirty
+          if [ -s /tmp/dirty ]; then
+            echo "::error::des fichiers non suivis subsistent apres fclean"
+            cat /tmp/dirty
+            exit 1
+          fi
