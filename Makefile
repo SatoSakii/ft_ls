@@ -8,6 +8,9 @@ SRCS_DIR	=	srcs
 INC_DIR		=	includes
 
 SRCS		:=	main.c \
+				globals.c \
+				opts.c \
+				term.c \
 
 SRCS		:=	$(addprefix $(SRCS_DIR)/, $(SRCS))
 OBJS		=	$(patsubst $(SRCS_DIR)/%.c, $(OBJS_DIR)/%.o, $(SRCS))

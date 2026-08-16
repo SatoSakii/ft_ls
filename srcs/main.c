@@ -2,8 +2,11 @@
 
 int	main(int argc, char **argv)
 {
-	(void)argc;
-	(void)argv;
+	int	i;
+	int	n_files;
 
+	i = decode_switches(argc, argv);
+	n_files = argc - i;
+	(void)n_files;
 	return (0);
 }
