@@ -15,13 +15,13 @@ OBJS		=	$(patsubst $(SRCS_DIR)/%.c, $(OBJS_DIR)/%.o, $(SRCS))
 all:	$(NAME)
 
 $(NAME):	$(OBJS)
-	@$(CC) $(FLAGS) -I$(INC_DIR) $(OBJS) -o $(NAME)
+	@$(CC) $(CFLAGS) -I$(INC_DIR) $(OBJS) -o $(NAME)
 	@echo " $(GREEN)$(BOLD)$(ITALIC)■$(RESET)  building	$(GREEN)$(BOLD)$(ITALIC)$(NAME)$(RESET)"
 
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
 	@mkdir -p $(dir $@)
 	@echo " $(CYAN)$(BOLD)$(ITALIC)■$(RESET)  compiling	$(GRAY)$(BOLD)$(ITALIC)$<$(RESET)"
-	@$(CC) $(FLAGS) -I$(INC_DIR) -o $@ -c $<
+	@$(CC) $(CFLAGS) -I$(INC_DIR) -o $@ -c $<
 
 clean:
 	@echo " $(RED)$(BOLD)$(ITALIC)■$(RESET)  cleaned	$(RED)$(BOLD)$(ITALIC)$(MLX_DIR)$(RESET)"
