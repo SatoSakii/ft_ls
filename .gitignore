@@ -1,0 +1,14 @@
+# build
+.build/
+*.o
+*.d
+*.a
+
+# binary
+ft_ls
+
+# debug
+a.out
+
+# macOS
+.DS_Store
