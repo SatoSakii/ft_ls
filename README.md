@@ -5,7 +5,7 @@ d'affichage et de tri.
 
 Je me base sur le code source de ls de GNU, tout en essayant d’utiliser le moins possible l’IA. Comme le sujet a changé, je peux me permettre d’implémenter toutes les fonctionnalités du véritable ls.
 
-truely gooner
+# ABSOLUTE GOONER
 
 ## Compilation
 
