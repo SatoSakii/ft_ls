@@ -1,7 +1,7 @@
 NAME		=	ft_ls
 
 CC			=	cc
-CFLAGS		=	-Wall -Werror -Wextra
+CFLAGS		=	-Wall -Werror -Wextra -MMD -MP
 
 OBJS_DIR 	=	.build
 SRCS_DIR	=	srcs
@@ -27,7 +27,7 @@ $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
 	@$(CC) $(CFLAGS) -I$(INC_DIR) -o $@ -c $<
 
 clean:
-	@echo " $(RED)$(BOLD)$(ITALIC)■$(RESET)  cleaned	$(RED)$(BOLD)$(ITALIC)$(MLX_DIR)$(RESET)"
+	@echo " $(RED)$(BOLD)$(ITALIC)■$(RESET)  cleaned	$(RED)$(BOLD)$(ITALIC)$(OBJS_DIR)$(RESET)"
 	@rm -rf $(OBJS_DIR)
 
 fclean:

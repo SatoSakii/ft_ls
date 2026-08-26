@@ -23,6 +23,7 @@ static struct option const	g_long_options[] =
 	{"time",			required_argument,	NULL, TIME_OPTION},
 	{"indicator-style",	required_argument,	NULL, INDICATOR_STYLE_OPTION},
 	{"format",			required_argument,	NULL, FORMAT_OPTION},
+	{"help",			no_argument,		NULL, HELP_OPTION},
 	{NULL, 0, NULL, 0}
 };
 
@@ -80,7 +81,8 @@ static int	apply_display(int c)
 								  g_format = FMT_LONG;
 								  g_format_set = 1;
 							  } }
-	else if (c == 'w')		{ g_line_length = (size_t)atoi(optarg); }
+	else if (c == 'w')		{ g_line_length = (size_t)atoi(optarg);
+							  g_width_set = 1; }
 	else					return (0);
 	return (1);
 }
@@ -181,6 +183,65 @@ static void	apply_indicator_option(void)
 			"  - 'none'\n  - 'slash'\n  - 'file-type'\n  - 'classify'\n");
 }
 
+static void	print_help(void)
+{
+	printf("Usage: ft_ls [OPTION]... [FILE]...\n");
+	printf("List information about the FILEs "
+		"(the current directory by default).\n");
+	printf("Sort entries alphabetically unless "
+		"-t, -S, -U or --sort is given.\n\n");
+	printf("  -a, --all                  do not ignore entries starting with .\n");
+	printf("  -A, --almost-all           do not list implied . and ..\n");
+	printf("  -c                         sort by, and show, ctime\n");
+	printf("  -d, --directory            list directories themselves, "
+		"not their contents\n");
+	printf("  -f                         do not sort, enable -a\n");
+	printf("  -F, --classify             append indicator (one of */=>@|) "
+		"to entries\n");
+	printf("  -g                         like -l, but do not list owner\n");
+	printf("  -G, --no-group             in a long listing, "
+		"don't print group names\n");
+	printf("  -h, --human-readable       print sizes like 1K 234M 2G etc.\n");
+	printf("  -i, --inode                print the index number of each file\n");
+	printf("  -l                         use a long listing format\n");
+	printf("  -n, --numeric-uid-gid      like -l, but list numeric user "
+		"and group IDs\n");
+	printf("  -o                         like -l, but do not list "
+		"group information\n");
+	printf("  -p                         append / indicator to directories\n");
+	printf("  -r, --reverse              reverse order while sorting\n");
+	printf("  -R, --recursive            list subdirectories recursively\n");
+	printf("  -s, --size                 print the allocated size of each "
+		"file, in blocks\n");
+	printf("  -S                         sort by file size, largest first\n");
+	printf("  -t                         sort by time, newest first\n");
+	printf("  -u                         sort by, and show, atime\n");
+	printf("  -U                         do not sort; list entries in "
+		"directory order\n");
+	printf("  -w, --width=COLS           set output width to COLS, 0 means "
+		"no limit\n");
+	printf("  -x                         list entries by lines "
+		"instead of by columns\n");
+	printf("  -1                         list one file per line\n\n");
+	printf("      --color[=WHEN]         color the output WHEN; more info below\n");
+	printf("      --format=WORD          across, horizontal, long, "
+		"single-column, verbose, vertical\n");
+	printf("      --indicator-style=WORD append indicator with style WORD to "
+		"entry names:\n");
+	printf("                               none, slash (-p), file-type, "
+		"classify (-F)\n");
+	printf("      --sort=WORD            sort by WORD instead of name: none (-U), "
+		"size (-S),\n");
+	printf("                               time (-t), version, extension, width\n");
+	printf("      --time=WORD            select which timestamp is used to "
+		"display or sort:\n");
+	printf("                               atime (-u), ctime (-c), mtime\n");
+	printf("      --help                 display this help and exit\n\n");
+	printf("The WHEN argument defaults to 'always' and can also be "
+		"'auto' or 'never'.\n");
+	exit(0);
+}
+
 static int	apply_long_only(int c)
 {
 	if (c == COLOR_OPTION)
@@ -193,6 +254,8 @@ static int	apply_long_only(int c)
 		apply_format_option();
 	else if (c == INDICATOR_STYLE_OPTION)
 		apply_indicator_option();
+	else if (c == HELP_OPTION)
+		print_help();
 	else
 		return (0);
 	return (1);
@@ -230,7 +293,8 @@ static void	resolve_conflicts(void)
 		else
 			g_format = FMT_ONE_PER_LINE;
 	}
-	if (g_format == FMT_MANY_PER_LINE || g_format == FMT_HORIZONTAL)
+	if (!g_width_set && (g_format == FMT_MANY_PER_LINE
+			|| g_format == FMT_HORIZONTAL))
 		g_line_length = term_width();
 	if (g_immediate_dirs)
 		g_recursive = 0;

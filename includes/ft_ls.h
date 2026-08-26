@@ -89,7 +89,8 @@ typedef enum e_no_short_opts
 	SORT_OPTION,
 	TIME_OPTION,
 	INDICATOR_STYLE_OPTION,
-	FORMAT_OPTION
+	FORMAT_OPTION,
+	HELP_OPTION
 }	t_no_short_opts;
 
 // st = file info collected by lstat
@@ -141,6 +142,7 @@ extern int					g_print_group;
 
 extern int					g_print_with_color;
 extern int					g_is_tty;
+extern int					g_width_set;
 extern size_t				g_line_length;
 
 // 0 = ok

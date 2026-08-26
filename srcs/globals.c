@@ -21,6 +21,7 @@ int					g_print_owner = 1;
 int					g_print_group = 1;
 int					g_print_with_color = 0;
 int					g_is_tty = 0;
+int					g_width_set = 0;
 int					g_exit_status = 0;
 size_t				g_line_length = 80;
 
