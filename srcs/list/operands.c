@@ -81,7 +81,9 @@ void	list_operands(int argc, char **argv, int i)
 	t_pending	*p;
 
 	n_files = argc - i;
-	if (n_files == 0)
+	if (n_files == 0 && g_immediate_dirs)
+		gobble_file(".", DT_UNKNOWN, "", 1);
+	else if (n_files == 0)
 		queue_directory(".", 1);
 	else
 		gobble_operands(argc, argv, i);
