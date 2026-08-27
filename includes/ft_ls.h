@@ -26,6 +26,10 @@
 #  define ST_CTIM(s) ((s).st_ctim)
 # endif
 
+# ifdef __linux__
+#  include <sys/sysmacros.h>
+# endif
+
 # define SIX_MONTHS (31556952 / 2)
 
 // file types recognized by ls
