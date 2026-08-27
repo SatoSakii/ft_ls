@@ -46,6 +46,7 @@ static int	apply_sort_and_format(int c)
 	else if (c == 'C')		{ g_format = FMT_MANY_PER_LINE; g_format_set = 1; }
 	else if (c == 't')		{ g_sort_type = SORT_TIME; g_sort_set = 1; }
 	else if (c == 'S')		{ g_sort_type = SORT_SIZE; g_sort_set = 1; }
+	else if (c == 'X')		{ g_sort_type = SORT_EXTENSION; g_sort_set = 1; }
 	else if (c == 'U')		{ g_sort_type = SORT_NONE; g_sort_set = 1; }
 	else if (c == 'f')		{ g_sort_type = SORT_NONE; g_sort_set = 1;
 							  g_ignore_mode = IGNORE_MINIMAL; }
@@ -122,12 +123,10 @@ static void	apply_sort_option(void)
 		g_sort_type = SORT_EXTENSION;
 	else if (!strcmp(optarg, "width"))
 		g_sort_type = SORT_WIDTH;
-	else if (!strcmp(optarg, "version"))
-		g_sort_type = SORT_VERSION;
 	else
 		arg_error("--sort", optarg,
 			"  - 'none'\n  - 'time'\n  - 'size'\n"
-			"  - 'extension'\n  - 'width'\n  - 'version'\n");
+			"  - 'extension'\n  - 'width'\n");
 	g_sort_set = 1;
 }
 
@@ -229,7 +228,7 @@ static void	print_help(void)
 		"classify (-F)\n");
 	printf("      --sort=WORD            sort by WORD instead of name: none (-U), "
 		"size (-S),\n");
-	printf("                               time (-t), version, extension, width\n");
+	printf("                               time (-t), extension, width\n");
 	printf("      --time=WORD            select which timestamp is used to "
 		"display or sort:\n");
 	printf("                               atime (-u), ctime (-c), mtime\n");
@@ -314,7 +313,7 @@ int	decode_switches(int argc, char **argv)
 	optindex = -1;
 	while (1)
 	{
-		c = getopt_long(argc, argv, "aACcdfFgGhilnopRrsStuUw:x1",
+		c = getopt_long(argc, argv, "aACcdfFgGhilnopRrsStuUw:xX1",
 				g_long_options, &optindex);
 		if (c == -1)
 			break ;

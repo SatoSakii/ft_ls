@@ -77,10 +77,11 @@ static void	print_name(const t_file *f)
 {
 	char	c;
 
-	printf("%s", f->name);
+	print_colored(f, f->name, 0);
 	if (f->filetype == SYMLINK && f->linkname)
 	{
-		printf(" -> %s", f->linkname);
+		printf(" -> ");
+		print_colored(f, f->linkname, 1);
 		c = file_indicator(f->linkmode);
 	}
 	else

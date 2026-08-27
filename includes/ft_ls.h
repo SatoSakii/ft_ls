@@ -56,7 +56,6 @@ typedef enum e_sort_type
 	SORT_EXTENSION,
 	SORT_WIDTH,
 	SORT_SIZE,
-	SORT_VERSION,
 	SORT_TIME,
 	SORT_NONE
 }	t_sort_type;
@@ -159,6 +158,38 @@ typedef struct s_widths
 	size_t	minor;
 }	t_widths;
 
+typedef enum e_color_slot
+{
+	C_LEFT,
+	C_RIGHT,
+	C_END,
+	C_RESET,
+	C_NORM,
+	C_FILE,
+	C_DIR,
+	C_LINK,
+	C_FIFO,
+	C_SOCK,
+	C_BLK,
+	C_CHR,
+	C_MISSING,
+	C_ORPHAN,
+	C_EXEC,
+	C_SETUID,
+	C_SETGID,
+	C_STICKY,
+	C_OW,
+	C_STICKY_OW,
+	C_SLOT_COUNT
+}	t_color_slot;
+
+typedef struct s_color_ext
+{
+	const char			*suffix;
+	const char			*seq;
+	struct s_color_ext *next;
+}	t_color_ext;
+
 extern t_format				g_format;
 extern t_sort_type			g_sort_type;
 extern t_time_type			g_time_type;
@@ -242,6 +273,9 @@ size_t						entry_display_width(const t_file *f);
 void						free_columns(void);
 void						print_many_per_line(void);
 void						print_horizontal(void);
-
+void						print_colored(const t_file *f, const char *name, int target);
+void						free_colors(void);
+void						color_init(void);
+int							color_is_set(t_color_slot lot);
 
 #endif

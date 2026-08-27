@@ -2,7 +2,16 @@
 
 static int	need_linkname(void)
 {
-	return (g_format == FMT_LONG);
+	return (g_format == FMT_LONG || g_print_with_color);
+}
+
+static int	need_link_mode(void)
+{
+	if (g_indicator_style == IND_CLASSIFY || g_indicator_style == IND_FILE_TYPE)
+		return (1);
+	if (!g_print_with_color)
+		return (0);
+	return (color_is_set(C_ORPHAN) || (color_is_set(C_MISSING) && g_format == FMT_LONG));
 }
 
 // read symlink target
@@ -196,7 +205,7 @@ static void	stat_link_target(t_file *f, const char *path)
 {
 	struct stat	target;
 
-	if (g_indicator_style != IND_CLASSIFY && g_indicator_style != IND_FILE_TYPE)
+	if (!need_link_mode())
 		return ;
 	if (stat(path, &target) != 0)
 		return ;

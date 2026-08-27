@@ -5,7 +5,7 @@ size_t	print_one(const t_file *f)
 	char	c;
 
 	print_prefix(f);
-	fputs(f->name, stdout);
+	print_colored(f, f->name, 0);
 	c = file_indicator(f->st.st_mode);
 	if (c)
 		putchar(c);

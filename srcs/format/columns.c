@@ -1,10 +1,15 @@
 #include "ft_ls.h"
 
-# define MIN_COL_WIDTH 3
-# define TAB_SIZE 8
-
 static size_t	*g_colw;
 static size_t	g_colw_alloc;
+
+// ls from gnu disable tab when there is color
+static size_t	tab_size(void)
+{
+	if (g_print_with_color)
+		return (0);
+	return (TAB_SIZE);
+}
 
 void	free_columns(void)
 {
@@ -112,12 +117,15 @@ static size_t	fitting_cols(int by_columns)
 
 static void	indent_to(size_t from, size_t to)
 {
+	size_t	tab;
+
+	tab = tab_size();
 	while (from < to)
 	{
-		if (to / TAB_SIZE > (from + 1) / TAB_SIZE)
+		if (tab != 0 && to / tab > (from + 1) / tab)
 		{
 			putchar('\t');
-			from += TAB_SIZE - from % TAB_SIZE;
+			from += tab - from % tab;
 		}
 		else
 		{
@@ -135,7 +143,7 @@ static void	print_one_line(void)
 	while (i < g_sorted_n_used)
 	{
 		if (i)
-			fputs("  ", stdout);
+			printf("  ");
 		print_one(g_sorted[i]);
 		i++;
 	}

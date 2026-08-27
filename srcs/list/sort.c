@@ -106,7 +106,6 @@ static t_cmp	get_comparator(void)
 		[SORT_EXTENSION] = cmp_extension,
 		[SORT_WIDTH] = cmp_width,
 		[SORT_SIZE] = cmp_size,
-		[SORT_VERSION] = cmp_name,
 		[SORT_TIME] = cmp_time
 	};
 
