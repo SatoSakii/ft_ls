@@ -3,6 +3,7 @@
 void	print_current_files(void)
 {
 	size_t	i;
+	char	c;
 
 	if (g_format == FMT_LONG)
 	{
@@ -15,7 +16,11 @@ void	print_current_files(void)
 	while (i < g_sorted_n_used)
 	{
 		print_prefix(g_sorted[i]);
-		fprintf(stdout, "%s\n", g_sorted[i]->name);
+		printf("%s", g_sorted[i]->name);
+		c = file_indicator(g_sorted[i]->st.st_mode);
+		if (c)
+			putchar(c);
+		putchar('\n');
 		i++;
 	}
 }
@@ -29,7 +34,7 @@ static void	print_header(const char *name)
 	if (!first)
 		putchar('\n');
 	first = 0;
-	fprintf(stdout, "%s:\n", name);
+	printf("%s:\n", name);
 }
 
 void	print_dir(const char *name, int cmdline)

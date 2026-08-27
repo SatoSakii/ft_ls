@@ -234,5 +234,6 @@ const struct timespec		*entry_time(const t_file *f);
 void						queue_subdirs(const char *dirname);
 char						*make_path(const char *dir, const char *name);
 void						file_failure(int cmdline, const char *msg, const char *path);
+char						file_indicator(mode_t m);
 
 #endif

@@ -60,10 +60,19 @@ void	print_prefix(const t_file *f)
 
 static void	print_name(const t_file *f)
 {
+	char	c;
+
 	printf("%s", f->name);
 	if (f->filetype == SYMLINK && f->linkname)
+	{
 		printf(" -> %s", f->linkname);
-	printf("\n");
+		c = file_indicator(f->linkmode);
+	}
+	else
+		c = file_indicator(f->st.st_mode);
+	if (c)
+		putchar(c);
+	putchar('\n');
 }
 
 static void	print_long_line(const t_file *f)

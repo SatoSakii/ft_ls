@@ -190,6 +190,20 @@ char	*make_path(const char *dir, const char *name)
 	return (path);
 }
 
+// get the target mode of a symbolic link for file indicators
+// only needed for -F and --file-type
+static void	stat_link_target(t_file *f, const char *path)
+{
+	struct stat	target;
+
+	if (g_indicator_style != IND_CLASSIFY && g_indicator_style != IND_FILE_TYPE)
+		return ;
+	if (stat(path, &target) != 0)
+		return ;
+	f->linkok = 1;
+	f->linkmode = target.st_mode;
+}
+
 // lstat (not stat) get info on the symlink itself, not the symlink' target
 static int	stat_entry(t_file *f, const char *name, const char *dirname, int cmdline)
 {
@@ -205,7 +219,10 @@ static int	stat_entry(t_file *f, const char *name, const char *dirname, int cmdl
 		if (cmdline && f->filetype == DIRECTORY)
 			f->filetype = ARG_DIRECTORY;
 		if (f->filetype == SYMLINK && need_linkname())
+		{
 			read_link_target(f, path);
+			stat_link_target(f, path);
+		}
 		if (cmdline && f->filetype == SYMLINK && g_deref_cmdline)
 			deref_cmdline_link(f, path);
 		free(path);
