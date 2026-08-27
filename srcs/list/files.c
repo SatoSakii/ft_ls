@@ -96,6 +96,21 @@ void	free_table(void)
 	g_sorted_alloc = 0;
 }
 
+// follow a command line symlink if it points to a directory
+static void	deref_cmdline_link(t_file *f, const char *path)
+{
+	struct stat	target;
+
+	if (stat(path, &target) != 0)
+		return ;
+	if (!S_ISDIR(target.st_mode))
+		return ;
+	f->st = target;
+	f->filetype = ARG_DIRECTORY;
+	free(f->linkname);
+	f->linkname = NULL;
+}
+
 // Avoid using a lstat by file
 static int	need_stat(void)
 {
@@ -154,7 +169,7 @@ static t_filetype	type_from_mode(mode_t m)
 
 // concanecate "dir/name"
 // avoid producing "//name"
-static char	*make_path(const char *dir, const char *name)
+char	*make_path(const char *dir, const char *name)
 {
 	size_t	dlen;
 	size_t	nlen;
@@ -191,14 +206,12 @@ static int	stat_entry(t_file *f, const char *name, const char *dirname, int cmdl
 			f->filetype = ARG_DIRECTORY;
 		if (f->filetype == SYMLINK && need_linkname())
 			read_link_target(f, path);
+		if (cmdline && f->filetype == SYMLINK && g_deref_cmdline)
+			deref_cmdline_link(f, path);
 		free(path);
 		return (1);
 	}
-	fprintf(stderr, "ft_ls: cannot access '%s': %s\n", path, strerror(errno));
-	if (cmdline)
-		g_exit_status = 2;
-	else
-		g_exit_status = 1;
+	file_failure(cmdline, "cannot access", path);
 	free(path);
 	return (0);
 }

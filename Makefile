@@ -11,6 +11,7 @@ SRCS		:=	main.c \
 				globals.c \
 				opts.c \
 				term.c \
+				error.c \
 				list/files.c \
 				list/sort.c \
 				list/print.c \

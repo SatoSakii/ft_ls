@@ -192,6 +192,8 @@ extern size_t				g_sorted_alloc;
 extern size_t				g_sorted_n_used;
 extern int					g_print_dir_name;
 
+extern int					g_deref_cmdline;
+
 // 0 = ok
 // 1 = minor error
 // 2 = error
@@ -229,5 +231,8 @@ const char					*group_field(const t_file *f);
 const char					*group_name(gid_t gid);
 const char					*user_name(uid_t uid);
 const struct timespec		*entry_time(const t_file *f);
+void						queue_subdirs(const char *dirname);
+char						*make_path(const char *dir, const char *name);
+void						file_failure(int cmdline, const char *msg, const char *path);
 
 #endif
