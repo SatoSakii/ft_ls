@@ -16,6 +16,7 @@ SRCS		:=	main.c \
 				list/sort.c \
 				list/print.c \
 				list/operands.c \
+				format/columns.c \
 				format/indicator.c \
 				format/long.c \
 				format/mode.c \

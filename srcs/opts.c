@@ -43,6 +43,7 @@ static int	apply_sort_and_format(int c)
 								g_format = FMT_ONE_PER_LINE;
 							  g_format_set = 1; }
 	else if (c == 'x')		{ g_format = FMT_HORIZONTAL; g_format_set = 1; }
+	else if (c == 'C')		{ g_format = FMT_MANY_PER_LINE; g_format_set = 1; }
 	else if (c == 't')		{ g_sort_type = SORT_TIME; g_sort_set = 1; }
 	else if (c == 'S')		{ g_sort_type = SORT_SIZE; g_sort_set = 1; }
 	else if (c == 'U')		{ g_sort_type = SORT_NONE; g_sort_set = 1; }
@@ -313,7 +314,7 @@ int	decode_switches(int argc, char **argv)
 	optindex = -1;
 	while (1)
 	{
-		c = getopt_long(argc, argv, "aAcdfFgGhilnopRrsStuUw:x1",
+		c = getopt_long(argc, argv, "aACcdfFgGhilnopRrsStuUw:x1",
 				g_long_options, &optindex);
 		if (c == -1)
 			break ;

@@ -58,6 +58,21 @@ void	print_prefix(const t_file *f)
 		printf("%*s ", (int)g_w.blocks, blocks_field(f));
 }
 
+// return the number of characters needed to display an entry
+size_t	entry_display_width(const t_file *f)
+{
+	size_t	w;
+
+	w = strlen(f->name);
+	if (g_print_inode)
+		w += g_w.inode + 1;
+	if (g_print_block_size)
+		w += g_w.blocks + 1;
+	if (file_indicator(f->st.st_mode))
+		w += 1;
+	return (w);
+}
+
 static void	print_name(const t_file *f)
 {
 	char	c;

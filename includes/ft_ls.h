@@ -31,6 +31,8 @@
 # endif
 
 # define SIX_MONTHS (31556952 / 2)
+# define MIN_COL_WIDTH 3
+# define TAB_SIZE 8
 
 // file types recognized by ls
 // ARG_DIRECTORY is used only for dir passed as arguments, arg + directory, lol.
@@ -235,5 +237,11 @@ void						queue_subdirs(const char *dirname);
 char						*make_path(const char *dir, const char *name);
 void						file_failure(int cmdline, const char *msg, const char *path);
 char						file_indicator(mode_t m);
+size_t						print_one(const t_file *f);
+size_t						entry_display_width(const t_file *f);
+void						free_columns(void);
+void						print_many_per_line(void);
+void						print_horizontal(void);
+
 
 #endif

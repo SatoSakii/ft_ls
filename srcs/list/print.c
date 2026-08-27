@@ -1,27 +1,34 @@
 #include "ft_ls.h"
 
+size_t	print_one(const t_file *f)
+{
+	char	c;
+
+	print_prefix(f);
+	fputs(f->name, stdout);
+	c = file_indicator(f->st.st_mode);
+	if (c)
+		putchar(c);
+	return (entry_display_width(f));
+}
+
 void	print_current_files(void)
 {
 	size_t	i;
-	char	c;
 
-	if (g_format == FMT_LONG)
-	{
-		print_long_files();
-		return ;
-	}
 	if (g_print_inode || g_print_block_size)
 		compute_widths();
+	if (g_format == FMT_LONG)
+		return (print_long_files());
+	if (g_format == FMT_MANY_PER_LINE)
+		return (print_many_per_line());
+	if (g_format == FMT_HORIZONTAL)
+		return (print_horizontal());
 	i = 0;
 	while (i < g_sorted_n_used)
 	{
-		print_prefix(g_sorted[i]);
-		printf("%s", g_sorted[i]->name);
-		c = file_indicator(g_sorted[i]->st.st_mode);
-		if (c)
-			putchar(c);
+		print_one(g_sorted[i++]);
 		putchar('\n');
-		i++;
 	}
 }
 
