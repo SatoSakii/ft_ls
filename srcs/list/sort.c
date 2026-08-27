@@ -14,7 +14,7 @@ static int	cmp_name(const void *a, const void *b)
 	return (diff);
 }
 
-static const struct timespec	*entry_time(const t_file *f)
+const struct timespec	*entry_time(const t_file *f)
 {
 	if (g_time_type == TIME_ATIME)
 		return (&ST_ATIM(f->st));

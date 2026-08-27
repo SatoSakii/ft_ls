@@ -12,6 +12,9 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <errno.h>
+# include <time.h>
+# include <pwd.h>
+# include <grp.h>
 
 # ifdef __APPLE__
 #  define ST_ATIM(s) ((s).st_atimespec)
@@ -22,6 +25,8 @@
 #  define ST_MTIM(s) ((s).st_mtim)
 #  define ST_CTIM(s) ((s).st_ctim)
 # endif
+
+# define SIX_MONTHS (31556952 / 2)
 
 // file types recognized by ls
 // ARG_DIRECTORY is used only for dir passed as arguments, arg + directory, lol.
@@ -135,6 +140,19 @@ typedef struct s_pending
 	struct s_pending	*next;
 }	t_pending;
 
+// column widths for one directory listing
+typedef struct s_widths
+{
+	size_t	inode;
+	size_t	blocks;
+	size_t	nlink;
+	size_t	owner;
+	size_t	group;
+	size_t	size;
+	size_t	major;
+	size_t	minor;
+}	t_widths;
+
 extern t_format				g_format;
 extern t_sort_type			g_sort_type;
 extern t_time_type			g_time_type;
@@ -191,5 +209,21 @@ void						print_current_files(void);
 int							queue_directory(const char *name, int cmdline);
 void						free_pending(void);
 void						list_operands(int argc, char **argv, int i);
+void						print_long_files(void);
+void						print_total(void);
+void						print_prefix(const t_file *f);
+void						compute_widths(void);
+void						mode_string(mode_t m, char *out);
+const char					*size_field(const t_file *f, size_t maj_w, size_t min_w);
+const char					*blocks_field(const t_file *f);
+const char					*human_size(unsigned long long size);
+unsigned long long			blocks_to_kib(unsigned long long blocks512);
+size_t						num_width(unsigned long long n);
+const char					*format_time(const struct timespec *ts);
+const char					*owner_field(const t_file *f);
+const char					*group_field(const t_file *f);
+const char					*group_name(gid_t gid);
+const char					*user_name(uid_t uid);
+const struct timespec		*entry_time(const t_file *f);
 
 #endif
