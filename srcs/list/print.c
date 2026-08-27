@@ -5,7 +5,7 @@ void	print_current_files(void)
 	size_t	i;
 
 	i = 0;
-	while (i < g_cwd_n_used)
+	while (i < g_sorted_n_used)
 	{
 		fprintf(stdout, "%s\n", g_sorted[i]->name);
 		i++;
