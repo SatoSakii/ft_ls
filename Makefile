@@ -11,6 +11,9 @@ SRCS		:=	main.c \
 				globals.c \
 				opts.c \
 				term.c \
+				list/files.c \
+				list/sort.c \
+				list/print.c \
 
 SRCS		:=	$(addprefix $(SRCS_DIR)/, $(SRCS))
 OBJS		=	$(patsubst $(SRCS_DIR)/%.c, $(OBJS_DIR)/%.o, $(SRCS))

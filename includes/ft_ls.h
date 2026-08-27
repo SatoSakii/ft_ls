@@ -6,6 +6,12 @@
 # include <sys/types.h>
 # include <limits.h>
 # include <stddef.h>
+# include <stdlib.h>
+# include <dirent.h>
+# include <string.h>
+# include <unistd.h>
+# include <stdio.h>
+# include <errno.h>
 
 // file types recognized by ls
 // ARG_DIRECTORY is used only for dir passed as arguments, arg + directory, lol.
@@ -145,6 +151,12 @@ extern int					g_is_tty;
 extern int					g_width_set;
 extern size_t				g_line_length;
 
+extern t_file				*g_cwd_file;
+extern size_t				g_cwd_n_alloc;
+extern size_t				g_cwd_n_used;
+extern t_file				**g_sorted;
+extern size_t				g_sorted_alloc;
+
 // 0 = ok
 // 1 = minor error
 // 2 = error
@@ -154,5 +166,11 @@ extern t_pending			*g_pending_dirs;
 
 int							decode_switches(int argc, char **argv);
 size_t						term_width(void);
+void						free_table(void);
+void						print_dir(const char *name);
+void						clear_files(void);
+void						sort_files(void);
+int							gobble_file(const char *name, unsigned char d_type,
+								const char *dirname);
 
 #endif

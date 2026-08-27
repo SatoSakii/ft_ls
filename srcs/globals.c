@@ -24,5 +24,10 @@ int					g_is_tty = 0;
 int					g_width_set = 0;
 int					g_exit_status = 0;
 size_t				g_line_length = 80;
+t_file				*g_cwd_file = NULL;
+size_t				g_cwd_n_alloc = 0;
+size_t				g_cwd_n_used = 0;
+t_file				**g_sorted = NULL;
+size_t				g_sorted_alloc = 0;
 
 t_pending			*g_pending_dirs = NULL;

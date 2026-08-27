@@ -7,6 +7,10 @@ int	main(int argc, char **argv)
 
 	i = decode_switches(argc, argv);
 	n_files = argc - i;
-	(void)n_files;
-	return (0);
+	if (n_files == 0)
+		print_dir(".");
+	else
+		print_dir(argv[i]);
+	free_table();
+	return (g_exit_status);
 }
