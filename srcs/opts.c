@@ -289,6 +289,8 @@ static void	resolve_conflicts(void)
 		else
 			g_format = FMT_ONE_PER_LINE;
 	}
+	if (!g_sort_set && g_explicit_time && g_format != FMT_LONG)
+		g_sort_type = SORT_TIME;
 	if (!g_width_set && (g_format == FMT_MANY_PER_LINE
 			|| g_format == FMT_HORIZONTAL))
 		g_line_length = term_width();

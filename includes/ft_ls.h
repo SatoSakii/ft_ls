@@ -13,6 +13,16 @@
 # include <stdio.h>
 # include <errno.h>
 
+# ifdef __APPLE__
+#  define ST_ATIM(s) ((s).st_atimespec)
+#  define ST_MTIM(s) ((s).st_mtimespec)
+#  define ST_CTIM(s) ((s).st_ctimespec)
+# else
+#  define ST_ATIM(s) ((s).st_atim)
+#  define ST_MTIM(s) ((s).st_mtim)
+#  define ST_CTIM(s) ((s).st_ctim)
+# endif
+
 // file types recognized by ls
 // ARG_DIRECTORY is used only for dir passed as arguments, arg + directory, lol.
 typedef enum e_filetype
@@ -166,6 +176,8 @@ extern int					g_print_dir_name;
 extern int					g_exit_status;
 
 extern t_pending			*g_pending_dirs;
+
+typedef int	(*t_cmp)(const void *, const void *);
 
 int							decode_switches(int argc, char **argv);
 size_t						term_width(void);
