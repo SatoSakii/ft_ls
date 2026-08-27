@@ -40,12 +40,7 @@ void	print_dir(const char *name, int cmdline)
 	dir = opendir(name);
 	if (!dir)
 	{
-		fprintf(stderr, "ft_ls: cannot open directory '%s': %s\n",
-			name, strerror(errno));
-		if (cmdline)
-			g_exit_status = 2;
-		else
-			g_exit_status = 1;
+		file_failure(cmdline, "cannot open directory", name);
 		return ;
 	}
 	print_header(name);
@@ -59,14 +54,12 @@ void	print_dir(const char *name, int cmdline)
 		de = readdir(dir);
 	}
 	if (errno != 0)
-	{
-		fprintf(stderr, "ft_ls: reading directory '%s': %s\n",
-			name, strerror(errno));
-		g_exit_status = 1;
-	}
+		file_failure(0, "reading directory", name);
 	closedir(dir);
 	sort_files();
 	if (g_format == FMT_LONG || g_print_block_size)
 		print_total();
 	print_current_files();
+	if (g_recursive)
+		queue_subdirs(name);
 }

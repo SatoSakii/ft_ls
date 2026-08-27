@@ -1,26 +1,5 @@
 #include "ft_ls.h"
 
-// add a directory to the front of the pending dir list
-int	queue_directory(const char *name, int cmdline)
-{
-	t_pending	*p;
-
-	p = malloc(sizeof(t_pending));
-	if (!p)
-		return (0);
-	p->name = strdup(name);
-	if (!p->name)
-	{
-		free(p);
-		return (0);
-	}
-	p->realname = NULL;
-	p->cmdline_arg = cmdline;
-	p->next = g_pending_dirs;
-	g_pending_dirs = p;
-	return (1);
-}
-
 static t_pending	*pop_pending(void)
 {
 	t_pending	*p;
@@ -129,5 +108,48 @@ void	list_operands(int argc, char **argv, int i)
 		free(p->realname);
 		free(p);
 		p = pop_pending();
+	}
+}
+
+// add a directory to the front of the pending dir list
+int	queue_directory(const char *name, int cmdline)
+{
+	t_pending	*p;
+
+	p = malloc(sizeof(t_pending));
+	if (!p)
+		return (0);
+	p->name = strdup(name);
+	if (!p->name)
+	{
+		free(p);
+		return (0);
+	}
+	p->realname = NULL;
+	p->cmdline_arg = cmdline;
+	p->next = g_pending_dirs;
+	g_pending_dirs = p;
+	return (1);
+}
+
+void	queue_subdirs(const char *dirname)
+{
+	size_t	i;
+	t_file	*f;
+	char	*path;
+
+	i = g_sorted_n_used;
+	while (i > 0)
+	{
+		f = g_sorted[--i];
+		if (f->filetype != DIRECTORY && f->filetype != ARG_DIRECTORY)
+			continue ;
+		if (!strcmp(f->name, ".") || !strcmp(f->name, ".."))
+			continue ;
+		path = make_path(dirname, f->name);
+		if (!path)
+			continue ;
+		queue_directory(path, 0);
+		free(path);
 	}
 }

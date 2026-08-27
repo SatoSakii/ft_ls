@@ -296,6 +296,7 @@ static void	resolve_conflicts(void)
 		g_line_length = term_width();
 	if (g_immediate_dirs)
 		g_recursive = 0;
+	g_deref_cmdline = !(g_immediate_dirs || g_format == FMT_LONG || g_indicator_style == IND_CLASSIFY);
 	if (g_color_when == COLOR_AUTO)
 		g_print_with_color = g_is_tty;
 	else
