@@ -29,5 +29,7 @@ size_t				g_cwd_n_alloc = 0;
 size_t				g_cwd_n_used = 0;
 t_file				**g_sorted = NULL;
 size_t				g_sorted_alloc = 0;
+size_t				g_sorted_n_used = 0;
+int					g_print_dir_name = 1;
 
 t_pending			*g_pending_dirs = NULL;

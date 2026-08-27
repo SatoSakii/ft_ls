@@ -139,35 +139,39 @@ static char	*make_path(const char *dir, const char *name)
 }
 
 // lstat (not stat) get info on the symlink itself, not the symlink' target
-static void	stat_entry(t_file *f, const char *name, const char *dirname)
+static int	stat_entry(t_file *f, const char *name, const char *dirname, int cmdline)
 {
 	char	*path;
 
 	path = make_path(dirname, name);
 	if (!path)
-		return ;
+		return (0);
 	if (lstat(path, &f->st) == 0)
 	{
 		f->stat_ok = 1;
 		f->filetype = type_from_mode(f->st.st_mode);
+		if (cmdline && f->filetype == DIRECTORY)
+			f->filetype = ARG_DIRECTORY;
+		free(path);
+		return (1);
 	}
+	fprintf(stderr, "ft_ls: cannot access '%s': %s\n", path, strerror(errno));
+	if (cmdline)
+		g_exit_status = 2;
 	else
-	{
-		fprintf(stderr, "ft_ls: cannot access '%s': %s\n",
-			path, strerror(errno));
 		g_exit_status = 1;
-	}
 	free(path);
+	return (0);
 }
 
 // adds an entry from a name read by readdir
 // returns 1 if added, 0 if filtered or alloc failed :c
 // filter THEN stat (only if needed)
-int	gobble_file(const char *name, unsigned char d_type, const char *dirname)
+int	gobble_file(const char *name, unsigned char d_type, const char *dirname, int cmdline)
 {
 	t_file	*f;
 
-	if (file_ignored(name))
+	if (!cmdline && file_ignored(name))
 		return (0);
 	f = new_entry();
 	if (!f)
@@ -179,7 +183,14 @@ int	gobble_file(const char *name, unsigned char d_type, const char *dirname)
 		return (0);
 	}
 	f->filetype = type_from_dtype(d_type);
-	if (need_stat() || f->filetype == UNKNOWN)
-		stat_entry(f, name, dirname);
+	if (cmdline || need_stat() || f->filetype == UNKNOWN)
+	{
+		if (!stat_entry(f, name, dirname, cmdline) && cmdline)
+		{
+			free_ent(f);
+			g_cwd_n_used--;
+			return (0);
+		}
+	}
 	return (1);
 }

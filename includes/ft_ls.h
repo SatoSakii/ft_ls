@@ -157,6 +157,9 @@ extern size_t				g_cwd_n_used;
 extern t_file				**g_sorted;
 extern size_t				g_sorted_alloc;
 
+extern size_t				g_sorted_n_used;
+extern int					g_print_dir_name;
+
 // 0 = ok
 // 1 = minor error
 // 2 = error
@@ -167,10 +170,14 @@ extern t_pending			*g_pending_dirs;
 int							decode_switches(int argc, char **argv);
 size_t						term_width(void);
 void						free_table(void);
-void						print_dir(const char *name);
+void						print_dir(const char *name, int cmdline);
 void						clear_files(void);
 void						sort_files(void);
 int							gobble_file(const char *name, unsigned char d_type,
-								const char *dirname);
+								const char *dirname, int cmdline);
+void						print_current_files(void);
+int							queue_directory(const char *name, int cmdline);
+void						free_pending(void);
+void						list_operands(int argc, char **argv, int i);
 
 #endif

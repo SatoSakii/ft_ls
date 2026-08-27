@@ -1,6 +1,6 @@
 #include "ft_ls.h"
 
-static void	print_current_files(void)
+void	print_current_files(void)
 {
 	size_t	i;
 
@@ -12,7 +12,19 @@ static void	print_current_files(void)
 	}
 }
 
-void	print_dir(const char *name)
+static void	print_header(const char *name)
+{
+	static int	first = 1;
+
+	if (!g_print_dir_name)
+		return ;
+	if (!first)
+		putchar('\n');
+	first = 0;
+	fprintf(stdout, "%s:\n", name);
+}
+
+void	print_dir(const char *name, int cmdline)
 {
 	DIR				*dir;
 	struct dirent	*de;
@@ -22,15 +34,19 @@ void	print_dir(const char *name)
 	{
 		fprintf(stderr, "ft_ls: cannot open directory '%s': %s\n",
 			name, strerror(errno));
-		g_exit_status = 1;
+		if (cmdline)
+			g_exit_status = 2;
+		else
+			g_exit_status = 1;
 		return ;
 	}
+	print_header(name);
 	clear_files();
 	errno = 0;
 	de = readdir(dir);
 	while (de)
 	{
-		gobble_file(de->d_name, de->d_type, name);
+		gobble_file(de->d_name, de->d_type, name, 0);
 		errno = 0;
 		de = readdir(dir);
 	}

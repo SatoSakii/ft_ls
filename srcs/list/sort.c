@@ -35,6 +35,7 @@ static int	init_sorted(void)
 		g_sorted[i] = &g_cwd_file[i];
 		i++;
 	}
+	g_sorted_n_used = g_cwd_n_used;
 	return (1);
 }
 
@@ -45,10 +46,10 @@ static void	reverse_sorted(void)
 	size_t	j;
 	t_file	*tmp;
 
-	if (g_cwd_n_used == 0)
+	if (g_sorted_n_used == 0)
 		return ;
 	i = 0;
-	j = g_cwd_n_used - 1;
+	j = g_sorted_n_used - 1;
 	while (i < j)
 	{
 		tmp = g_sorted[i];
@@ -64,7 +65,7 @@ void	sort_files(void)
 	if (!init_sorted())
 		return ;
 	if (g_sort_type != SORT_NONE)
-		qsort(g_sorted, g_cwd_n_used, sizeof(t_file *), cmp_name);
+		qsort(g_sorted, g_sorted_n_used, sizeof(t_file *), cmp_name);
 	if (g_sort_reverse)
 		reverse_sorted();
 }
