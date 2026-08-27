@@ -1,5 +1,42 @@
 #include "ft_ls.h"
 
+static int	need_linkname(void)
+{
+	return (g_format == FMT_LONG);
+}
+
+// read symlink target
+static void	read_link_target(t_file *f, const char *path)
+{
+	char	*buf;
+	size_t	size;
+	ssize_t	n;
+
+	size = (size_t)f->st.st_size + 1;
+	if (size < 64)
+		size = 64;
+	while (1)
+	{
+		buf = malloc(size);
+		if (!buf)
+			return ;
+		n = readlink(path, buf, size);
+		if (n < 0)
+		{
+			free(buf);
+			return ;
+		}
+		if ((size_t)n < size)
+		{
+			buf[n] = '\0';
+			f->linkname = buf;
+			return ;
+		}
+		free(buf);
+		size += 2;
+	}
+}
+
 static t_file	*new_entry(void)
 {
 	t_file	*tmp;
@@ -152,6 +189,8 @@ static int	stat_entry(t_file *f, const char *name, const char *dirname, int cmdl
 		f->filetype = type_from_mode(f->st.st_mode);
 		if (cmdline && f->filetype == DIRECTORY)
 			f->filetype = ARG_DIRECTORY;
+		if (f->filetype == SYMLINK && need_linkname())
+			read_link_target(f, path);
 		free(path);
 		return (1);
 	}

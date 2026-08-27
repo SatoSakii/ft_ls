@@ -4,9 +4,17 @@ void	print_current_files(void)
 {
 	size_t	i;
 
+	if (g_format == FMT_LONG)
+	{
+		print_long_files();
+		return ;
+	}
+	if (g_print_inode || g_print_block_size)
+		compute_widths();
 	i = 0;
 	while (i < g_sorted_n_used)
 	{
+		print_prefix(g_sorted[i]);
 		fprintf(stdout, "%s\n", g_sorted[i]->name);
 		i++;
 	}
@@ -58,5 +66,7 @@ void	print_dir(const char *name, int cmdline)
 	}
 	closedir(dir);
 	sort_files();
+	if (g_format == FMT_LONG || g_print_block_size)
+		print_total();
 	print_current_files();
 }

@@ -15,6 +15,11 @@ SRCS		:=	main.c \
 				list/sort.c \
 				list/print.c \
 				list/operands.c \
+				format/long.c \
+				format/mode.c \
+				format/size.c \
+				format/time.c \
+				format/user.c
 
 SRCS		:=	$(addprefix $(SRCS_DIR)/, $(SRCS))
 OBJS		=	$(patsubst $(SRCS_DIR)/%.c, $(OBJS_DIR)/%.o, $(SRCS))
