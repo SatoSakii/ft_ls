@@ -252,12 +252,12 @@ static void	end_color(void)
 {
 	if (g_color[C_END])
 	{
-		printf("%s", g_color[C_END]);
+		fputs(g_color[C_END], stdout);
 		return ;
 	}
-	printf("%s", g_color[C_LEFT]);
-	printf("%s", g_color[C_RESET]);
-	printf("%s", g_color[C_RIGHT]);
+	fputs(g_color[C_LEFT], stdout);
+	fputs(g_color[C_RESET], stdout);
+	fputs(g_color[C_RIGHT], stdout);
 }
 
 void	print_colored(const t_file *f, const char *name, int target)
@@ -269,7 +269,7 @@ void	print_colored(const t_file *f, const char *name, int target)
 		seq = color_for(f, name, target);
 	if (!seq)
 	{
-		printf("%s", name);
+		fputs(name, stdout);
 		return ;
 	}
 	if (!g_used_color)
@@ -277,9 +277,9 @@ void	print_colored(const t_file *f, const char *name, int target)
 		g_used_color = 1;
 		end_color();
 	}
-	printf("%s", g_color[C_LEFT]);
-	printf("%s", seq);
-	printf("%s", g_color[C_RIGHT]);
-	printf("%s", name);
+	fputs(g_color[C_LEFT], stdout);
+	fputs(seq, stdout);
+	fputs(g_color[C_RIGHT], stdout);
+	fputs(name, stdout);
 	end_color();
 }

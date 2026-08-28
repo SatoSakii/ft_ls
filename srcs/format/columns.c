@@ -150,7 +150,7 @@ static void	print_one_line(void)
 	while (i < g_sorted_n_used)
 	{
 		if (i)
-			printf("  ");
+			fputs("  ", stdout);
 		print_one(g_sorted[i]);
 		i++;
 	}

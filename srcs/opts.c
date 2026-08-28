@@ -61,7 +61,7 @@ static void	arg_error(const char *opt, const char *value, const char *valid)
 {
 	fprintf(stderr, "ft_ls: invalid argument '%s' for '%s'\n", value, opt);
 	fprintf(stderr, "Valid arguments are:\n%s", valid);
-	fprintf(stderr, "Try 'ft_ls --help' for more information.\n");
+	fputs("Try 'ft_ls --help' for more information.\n", stderr);
 	exit(1);
 }
 
@@ -223,64 +223,64 @@ static void	apply_indicator_option(void)
 
 static void	print_help(void)
 {
-	printf("Usage: ft_ls [OPTION]... [FILE]...\n");
-	printf("List information about the FILEs "
-		"(the current directory by default).\n");
-	printf("Sort entries alphabetically unless "
-		"-t, -S, -X, -U or --sort is given.\n\n");
-	printf("  -a, --all                  do not ignore entries starting with .\n");
-	printf("  -A, --almost-all           do not list implied . and ..\n");
-	printf("  -c                         sort by, and show, ctime\n");
-	printf("  -C                         list entries by columns\n");
-	printf("  -d, --directory            list directories themselves, "
-		"not their contents\n");
-	printf("  -f                         do not sort, enable -a\n");
-	printf("  -F, --classify[=WHEN]      append indicator (one of */=>@|) "
-		"to entries WHEN\n");
-	printf("  -g                         like -l, but do not list owner\n");
-	printf("  -G, --no-group             in a long listing, "
-		"don't print group names\n");
-	printf("  -h, --human-readable       print sizes like 1K 234M 2G etc.\n");
-	printf("  -i, --inode                print the index number of each file\n");
-	printf("  -l                         use a long listing format\n");
-	printf("  -n, --numeric-uid-gid      like -l, but list numeric user "
-		"and group IDs\n");
-	printf("  -o                         like -l, but do not list "
-		"group information\n");
-	printf("  -p                         append / indicator to directories\n");
-	printf("  -r, --reverse              reverse order while sorting\n");
-	printf("  -R, --recursive            list subdirectories recursively\n");
-	printf("  -s, --size                 print the allocated size of each "
-		"file, in blocks\n");
-	printf("  -S                         sort by file size, largest first\n");
-	printf("  -t                         sort by time, newest first\n");
-	printf("  -u                         sort by, and show, atime\n");
-	printf("  -U                         do not sort; list entries in "
-		"directory order\n");
-	printf("  -w, --width=COLS           set output width to COLS, 0 means "
-		"no limit\n");
-	printf("  -x                         list entries by lines "
-		"instead of by columns\n");
-	printf("  -X                         sort alphabetically by entry "
-		"extension\n");
-	printf("  -1                         list one file per line\n\n");
-	printf("      --color[=WHEN]         color the output WHEN; more info below\n");
-	printf("      --format=WORD          across, horizontal, long, "
-		"single-column, verbose, vertical\n");
-	printf("      --indicator-style=WORD append indicator with style WORD to "
-		"entry names:\n");
-	printf("                               none, slash (-p), file-type, "
-		"classify (-F)\n");
-	printf("      --sort=WORD            sort by WORD instead of name: none (-U), "
-		"size (-S),\n");
-	printf("                               time (-t), extension (-X), name, "
-		"width\n");
-	printf("      --time=WORD            select which timestamp is used to "
-		"display or sort:\n");
-	printf("                               atime (-u), ctime (-c), mtime\n");
-	printf("      --help                 display this help and exit\n\n");
-	printf("The WHEN argument defaults to 'always' and can also be "
-		"'auto' or 'never'.\n");
+	fputs("Usage: ft_ls [OPTION]... [FILE]...\n", stdout);
+	fputs("List information about the FILEs "
+		"(the current directory by default).\n", stdout);
+	fputs("Sort entries alphabetically unless "
+		"-t, -S, -X, -U or --sort is given.\n\n", stdout);
+	fputs("  -a, --all                  do not ignore entries starting with .\n", stdout);
+	fputs("  -A, --almost-all           do not list implied . and ..\n", stdout);
+	fputs("  -c                         sort by, and show, ctime\n", stdout);
+	fputs("  -C                         list entries by columns\n", stdout);
+	fputs("  -d, --directory            list directories themselves, "
+		"not their contents\n", stdout);
+	fputs("  -f                         do not sort, enable -a\n", stdout);
+	fputs("  -F, --classify[=WHEN]      append indicator (one of */=>@|) "
+		"to entries WHEN\n", stdout);
+	fputs("  -g                         like -l, but do not list owner\n", stdout);
+	fputs("  -G, --no-group             in a long listing, "
+		"don't print group names\n", stdout);
+	fputs("  -h, --human-readable       print sizes like 1K 234M 2G etc.\n", stdout);
+	fputs("  -i, --inode                print the index number of each file\n", stdout);
+	fputs("  -l                         use a long listing format\n", stdout);
+	fputs("  -n, --numeric-uid-gid      like -l, but list numeric user "
+		"and group IDs\n", stdout);
+	fputs("  -o                         like -l, but do not list "
+		"group information\n", stdout);
+	fputs("  -p                         append / indicator to directories\n", stdout);
+	fputs("  -r, --reverse              reverse order while sorting\n", stdout);
+	fputs("  -R, --recursive            list subdirectories recursively\n", stdout);
+	fputs("  -s, --size                 print the allocated size of each "
+		"file, in blocks\n", stdout);
+	fputs("  -S                         sort by file size, largest first\n", stdout);
+	fputs("  -t                         sort by time, newest first\n", stdout);
+	fputs("  -u                         sort by, and show, atime\n", stdout);
+	fputs("  -U                         do not sort; list entries in "
+		"directory order\n", stdout);
+	fputs("  -w, --width=COLS           set output width to COLS, 0 means "
+		"no limit\n", stdout);
+	fputs("  -x                         list entries by lines "
+		"instead of by columns\n", stdout);
+	fputs("  -X                         sort alphabetically by entry "
+		"extension\n", stdout);
+	fputs("  -1                         list one file per line\n\n", stdout);
+	fputs("      --color[=WHEN]         color the output WHEN; more info below\n", stdout);
+	fputs("      --format=WORD          across, horizontal, long, "
+		"single-column, verbose, vertical\n", stdout);
+	fputs("      --indicator-style=WORD append indicator with style WORD to "
+		"entry names:\n", stdout);
+	fputs("                               none, slash (-p), file-type, "
+		"classify (-F)\n", stdout);
+	fputs("      --sort=WORD            sort by WORD instead of name: none (-U), "
+		"size (-S),\n", stdout);
+	fputs("                               time (-t), extension (-X), name, "
+		"width\n", stdout);
+	fputs("      --time=WORD            select which timestamp is used to "
+		"display or sort:\n", stdout);
+	fputs("                               atime (-u), ctime (-c), mtime\n", stdout);
+	fputs("      --help                 display this help and exit\n\n", stdout);
+	fputs("The WHEN argument defaults to 'always' and can also be "
+		"'auto' or 'never'.\n", stdout);
 	exit(0);
 }
 
@@ -323,7 +323,7 @@ static void	missing_arg_error(char **argv)
 		fprintf(stderr, "ft_ls: option '%s' requires an argument\n", bad);
 	else
 		fprintf(stderr, "ft_ls: option requires an argument -- '%c'\n", optopt);
-	fprintf(stderr, "Try 'ft_ls --help' for more information.\n");
+	fputs("Try 'ft_ls --help' for more information.\n", stderr);
 	exit(2);
 }
 
@@ -337,7 +337,7 @@ static void	usage_error(char **argv)
 		fprintf(stderr, "ft_ls: unrecognized option '%s'\n", bad);
 	else
 		fprintf(stderr, "ft_ls: invalid option -- '%c'\n", optopt);
-	fprintf(stderr, "Try 'ft_ls --help' for more information.\n");
+	fputs("Try 'ft_ls --help' for more information.\n", stderr);
 	exit(2);
 }
 

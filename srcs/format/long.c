@@ -82,7 +82,7 @@ static void	print_name(const t_file *f)
 	print_colored(f, f->name, 0);
 	if (f->filetype == SYMLINK && f->linkname)
 	{
-		printf(" -> ");
+		fputs(" -> ", stdout);
 		print_colored(f, f->linkname, 1);
 		c = file_indicator(f->linkmode);
 	}
