@@ -54,6 +54,8 @@ const char	*blocks_field(const t_file *f)
 	static char			buf[32];
 	unsigned long long	b;
 
+	if (!f->stat_ok)
+		return ("?");
 	b = (unsigned long long)f->st.st_blocks;
 	if (g_human)
 		return (human_size(b * 512));
@@ -66,6 +68,8 @@ const char	*size_field(const t_file *f, size_t maj_w, size_t min_w)
 {
 	static char	buf[64];
 
+	if (!f->stat_ok)
+		return ("?");
 	if (S_ISCHR(f->st.st_mode) || S_ISBLK(f->st.st_mode))
 	{
 		snprintf(buf, sizeof(buf), "%*u, %*u",

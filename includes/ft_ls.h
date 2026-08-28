@@ -31,6 +31,7 @@
 # endif
 
 # define SIX_MONTHS (31556952 / 2)
+# define TIME_WIDTH 12
 # define MIN_COL_WIDTH 3
 # define TAB_SIZE 8
 
@@ -140,7 +141,6 @@ typedef struct s_file
 typedef struct s_pending
 {
 	char				*name;
-	char				*realname;
 	int					cmdline_arg;
 	struct s_pending	*next;
 }	t_pending;
@@ -224,6 +224,7 @@ extern size_t				g_sorted_alloc;
 
 extern size_t				g_sorted_n_used;
 extern int					g_print_dir_name;
+extern int					g_keep_widths;
 
 extern int					g_deref_cmdline;
 
@@ -252,7 +253,9 @@ void						print_long_files(void);
 void						print_total(void);
 void						print_prefix(const t_file *f);
 void						compute_widths(void);
-void						mode_string(mode_t m, char *out);
+void						freeze_widths(void);
+void						mode_string(const t_file *f, char *out);
+mode_t						mode_from_type(t_filetype t);
 const char					*size_field(const t_file *f, size_t maj_w, size_t min_w);
 const char					*blocks_field(const t_file *f);
 const char					*human_size(unsigned long long size);
@@ -262,12 +265,15 @@ const char					*format_time(const struct timespec *ts);
 const char					*owner_field(const t_file *f);
 const char					*group_field(const t_file *f);
 const char					*group_name(gid_t gid);
+int							owner_is_id(const t_file *f);
+int							group_is_id(const t_file *f);
 const char					*user_name(uid_t uid);
 const struct timespec		*entry_time(const t_file *f);
 void						queue_subdirs(const char *dirname);
 char						*make_path(const char *dir, const char *name);
 void						file_failure(int cmdline, const char *msg, const char *path);
 char						file_indicator(mode_t m);
+char						entry_indicator(const t_file *f);
 size_t						print_one(const t_file *f);
 size_t						entry_display_width(const t_file *f);
 void						free_columns(void);
@@ -276,6 +282,7 @@ void						print_horizontal(void);
 void						print_colored(const t_file *f, const char *name, int target);
 void						free_colors(void);
 void						color_init(void);
-int							color_is_set(t_color_slot lot);
+int							color_is_set(t_color_slot slot);
+int							color_symlink_as_target(void);
 
 #endif

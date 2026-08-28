@@ -27,6 +27,7 @@ static const char	*g_color[C_SLOT_COUNT] = {
 static char			*g_ls_colors;
 static t_color_ext	*g_ext_list;
 static int			g_used_color;
+static int			g_link_as_target;
 
 // ls colors for each file type
 static const char	*g_keys[C_SLOT_COUNT] = {
@@ -78,6 +79,11 @@ static void	set_entry(char *key, char *value)
 	if (key[0] == '*')
 	{
 		add_ext(key + 1, value);
+		return ;
+	}
+	if (!strcmp(key, "ln") && !strcmp(value, "target"))
+	{
+		g_link_as_target = 1;
 		return ;
 	}
 	i = 0;
@@ -201,16 +207,34 @@ static const char	*ext_seq(const char *name)
 	return (NULL);
 }
 
+// LS_COLORS can hold "ln=target", which asks for a symlink to be painted
+// with the color of the file it points to
+int	color_symlink_as_target(void)
+{
+	return (g_link_as_target);
+}
+
+static mode_t	entry_mode(const t_file *f)
+{
+	if (g_link_as_target && f->filetype == SYMLINK && f->linkok)
+		return (f->linkmode);
+	if (f->stat_ok)
+		return (f->st.st_mode);
+	return (mode_from_type(f->filetype));
+}
+
 static const char	*color_for(const t_file *f, const char *name, int target)
 {
 	mode_t			m;
 	t_color_slot	slot;
 	const char		*seq;
 
+	if (target && !f->linkok && g_color[C_MISSING])
+		return (g_color[C_MISSING]);
 	if (target)
 		m = f->linkmode;
 	else
-		m = f->st.st_mode;
+		m = entry_mode(f);
 	slot = slot_of_mode(m);
 	if (slot == C_FILE)
 	{
@@ -218,7 +242,8 @@ static const char	*color_for(const t_file *f, const char *name, int target)
 		if (seq)
 			return (seq);
 	}
-	if (slot == C_LINK && !f->linkok && g_color[C_ORPHAN])
+	if (slot == C_LINK && !f->linkok
+		&& (g_color[C_ORPHAN] || g_link_as_target))
 		slot = C_ORPHAN;
 	return (g_color[slot]);
 }

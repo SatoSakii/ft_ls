@@ -27,8 +27,11 @@ SRCS		:=	main.c \
 
 SRCS		:=	$(addprefix $(SRCS_DIR)/, $(SRCS))
 OBJS		=	$(patsubst $(SRCS_DIR)/%.c, $(OBJS_DIR)/%.o, $(SRCS))
+DEPS		=	$(OBJS:.o=.d)
 
 all:	$(NAME)
+
+-include $(DEPS)
 
 $(NAME):	$(OBJS)
 	@$(CC) $(CFLAGS) -I$(INC_DIR) $(OBJS) -o $(NAME)

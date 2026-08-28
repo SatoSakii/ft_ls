@@ -52,32 +52,39 @@ static size_t	col_of(size_t i, size_t cols, size_t rows, int by_columns)
 	return (i % cols);
 }
 
-// compute the width of each output column
-static size_t	compute_col_widths(size_t cols, int by_columns)
+// compute the width of each output column, and say if the line still fits
+// like ls, the length is only re-checked when a column really grows past
+// MIN_COL_WIDTH : a layout where every name fits in 3 stays valid, even if
+// cols * MIN_COL_WIDTH is already wider than the terminal
+static int	compute_col_widths(size_t cols, int by_columns)
 {
 	size_t	rows;
 	size_t	i;
 	size_t	idx;
 	size_t	w;
+	size_t	len;
+	int		valid;
 
 	rows = (g_sorted_n_used + cols - 1) / cols;
 	i = 0;
 	while (i < cols)
 		g_colw[i++] = MIN_COL_WIDTH;
+	len = cols * MIN_COL_WIDTH;
+	valid = 1;
 	i = 0;
 	while (i < g_sorted_n_used)
 	{
 		idx = col_of(i, cols, rows, by_columns);
 		w = g_sorted[i]->width + 2 * (idx + 1 != cols);
 		if (w > g_colw[idx])
+		{
+			len += w - g_colw[idx];
 			g_colw[idx] = w;
+			valid = (len < g_line_length);
+		}
 		i++;
 	}
-	w = 0;
-	i = 0;
-	while (i < cols)
-		w += g_colw[i++];
-	return (w);
+	return (valid);
 }
 
 // theory
@@ -107,7 +114,7 @@ static size_t	fitting_cols(int by_columns)
 	c = max_cols;
 	while (c > 1)
 	{
-		if (compute_col_widths(c, by_columns) < g_line_length)
+		if (compute_col_widths(c, by_columns))
 			return (c);
 		c--;
 	}
