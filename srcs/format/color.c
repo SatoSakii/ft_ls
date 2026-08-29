@@ -118,6 +118,43 @@ static void	parse_ls_colors(char *s)
 	}
 }
 
+// the TERM patterns of dircolors. without LS_COLORS, ls only falls back on
+// its built in colors when the terminal is known to understand them
+static const char	*g_term_types[] = {
+	"Eterm", "ansi", "*color*", "con[0-9]*x[0-9]*", "cons25", "console",
+	"cygwin", "*direct*", "dtterm", "gnome", "hurd", "jfbterm", "konsole",
+	"kterm", "linux", "linux-c", "mlterm", "putty", "rxvt*", "screen*",
+	"st", "terminator", "tmux*", "vt100", "vt220", "xterm*", NULL
+};
+
+static int	known_term_type(void)
+{
+	const char	*term;
+	size_t		i;
+
+	term = getenv("TERM");
+	if (!term || !*term)
+		return (0);
+	i = 0;
+	while (g_term_types[i])
+	{
+		if (fnmatch(g_term_types[i], term, 0) == 0)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+// an empty LS_COLORS does not mean "no color", it means "your defaults"
+static void	color_without_ls_colors(void)
+{
+	const char	*colorterm;
+
+	colorterm = getenv("COLORTERM");
+	if ((!colorterm || !*colorterm) && !known_term_type())
+		g_print_with_color = 0;
+}
+
 void	color_init(void)
 {
 	char	*env;
@@ -126,7 +163,7 @@ void	color_init(void)
 		return ;
 	env = getenv("LS_COLORS");
 	if (!env || !*env)
-		return ;
+		return (color_without_ls_colors());
 	g_ls_colors = strdup(env);
 	if (!g_ls_colors)
 		return ;

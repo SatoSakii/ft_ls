@@ -6,6 +6,7 @@ CFLAGS		=	-Wall -Werror -Wextra -MMD -MP
 OBJS_DIR 	=	.build
 SRCS_DIR	=	srcs
 INC_DIR		=	includes
+TESTS		=	tests/run_tests.sh
 
 SRCS		:=	main.c \
 				globals.c \
@@ -54,7 +55,11 @@ fclean:
 
 re: fclean all
 
-.PHONY: all clean fclean re
+test:	$(NAME)
+	@echo " $(MAGENTA)$(BOLD)$(ITALIC)■$(RESET)  testing	$(MAGENTA)$(BOLD)$(ITALIC)$(NAME)$(RESET)"
+	@bash $(TESTS)
+
+.PHONY: all clean fclean re test
 
 BLACK		=	\033[30m
 RED			=	\033[31m
