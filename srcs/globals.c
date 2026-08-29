@@ -34,4 +34,6 @@ int					g_print_dir_name = 1;
 int					g_keep_widths = 0;
 int					g_deref_cmdline = 0;
 
+int					g_any_has_acl = 0;
+
 t_pending			*g_pending_dirs = NULL;

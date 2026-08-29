@@ -131,7 +131,7 @@ static void	print_time_field(const t_file *f)
 
 static void	print_long_line(const t_file *f)
 {
-	char	mode[11];
+	char	mode[12];
 
 	print_prefix(f);
 	mode_string(f, mode);

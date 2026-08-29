@@ -64,12 +64,23 @@ static void	unknown_mode_string(const t_file *f, char *out)
 	out[10] = '\0';
 }
 
+static void	append_acl_char(const t_file *f, char *out)
+{
+	if (!g_any_has_acl)
+		return ;
+	out[10] = acl_indicator(f);
+	out[11] = '\0';
+}
+
 void	mode_string(const t_file *f, char *out)
 {
 	mode_t	m;
 
 	if (!f->stat_ok)
-		return (unknown_mode_string(f, out));
+	{
+		unknown_mode_string(f, out);
+		return (append_acl_char(f, out));
+	}
 	m = f->st.st_mode;
 	out[0] = type_letter(m);
 	out[1] = (m & S_IRUSR) ? 'r' : '-';
@@ -82,4 +93,5 @@ void	mode_string(const t_file *f, char *out)
 	out[8] = (m & S_IWOTH) ? 'w' : '-';
 	out[9] = exec_char(m & S_IXOTH, m & S_ISVTX, 't');
 	out[10] = '\0';
+	append_acl_char(f, out);
 }

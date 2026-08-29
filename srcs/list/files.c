@@ -94,6 +94,7 @@ void	clear_files(void)
 	while (i < g_cwd_n_used)
 		free_ent(&g_cwd_file[i++]);
 	g_cwd_n_used = 0;
+	g_any_has_acl = 0;
 }
 
 void	free_table(void)
@@ -250,9 +251,12 @@ static int	stat_entry(t_file *f, const char *name, const char *dirname, int cmdl
 		}
 		if (cmdline && f->filetype == SYMLINK && g_deref_cmdline)
 			deref_cmdline_link(f, path);
+		acl_gobble(f, path);
 		free(path);
 		return (1);
 	}
+	if (!cmdline)
+		acl_gobble(f, path);
 	file_failure(cmdline, "cannot access", path);
 	free(path);
 	return (0);

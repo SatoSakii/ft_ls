@@ -26,6 +26,13 @@
 #  define ST_CTIM(s) ((s).st_ctim)
 # endif
 
+# ifdef __APPLE__
+#  include <sys/acl.h>
+# else
+#  include <sys/xattr.h>
+#  define ATTR_BUF_SIZE 65536
+# endif
+
 # ifdef __linux__
 #  include <sys/sysmacros.h>
 # endif
@@ -49,6 +56,15 @@ typedef enum e_filetype
 	SOCK,
 	ARG_DIRECTORY
 }	t_filetype;
+
+// acl type
+typedef enum e_acl_type
+{
+	ACL_NONE = 0,
+	ACL_UNKNOWN,
+	ACL_CONTEXT,
+	ACL_YES
+}	t_acl_type;
 
 // sorting methods
 typedef enum e_sort_type
@@ -133,9 +149,18 @@ typedef struct s_file
 	mode_t		linkmode;
 	int			stat_ok;
 	int			linkok;
-	char		acl_type;
+	t_acl_type	acl_type;
 	size_t		width;
 }	t_file;
+
+// has_acl gives the '+', has_scontext gives the '.'
+// err is kept because the errno decides
+// if it is worth asking again
+typedef struct s_aclinfo
+{
+	int	has_scontext;
+	int	err;
+}	t_aclinfo;
 
 // directory using -R opt
 typedef struct s_pending
@@ -233,6 +258,8 @@ extern int					g_deref_cmdline;
 // 2 = error
 extern int					g_exit_status;
 
+extern int					g_any_has_acl;
+
 extern t_pending			*g_pending_dirs;
 
 typedef int	(*t_cmp)(const void *, const void *);
@@ -284,5 +311,8 @@ void						free_colors(void);
 void						color_init(void);
 int							color_is_set(t_color_slot slot);
 int							color_symlink_as_target(void);
+void						acl_gobble(t_file *f, const char *path);
+char						acl_indicator(const t_file *f);
+
 
 #endif
