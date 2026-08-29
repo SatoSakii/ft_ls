@@ -5,6 +5,24 @@ on:
   pull_request:
 
 jobs:
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Le ls de reference est bien GNU
+        run: |
+          ls --version | head -1
+          ls --version | head -1 | grep -q coreutils
+
+      - name: Compilation
+        run: make
+
+      - name: Suite de comparaison contre GNU ls
+        run: make test
+
   build:
     name: build (${{ matrix.cc }})
     runs-on: ubuntu-latest
