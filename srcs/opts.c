@@ -100,7 +100,7 @@ static void	set_line_width(void)
 		s++;
 	errno = 0;
 	v = strtoul(s, &end, 0);
-	if (s == end || *end != '\0')
+	if (*s == '-' || s == end || *end != '\0')
 	{
 		fflush(stdout);
 		fprintf(stderr, "ft_ls: invalid line width: '%s'\n", optarg);
