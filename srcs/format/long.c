@@ -2,6 +2,23 @@
 
 static t_widths	g_w;
 
+// ls measures a name in printable char not in bytes
+size_t	name_width(const char *s)
+{
+	size_t			w;
+	unsigned char	c;
+
+	w = 0;
+	while (s && *s)
+	{
+		c = (unsigned char)*s++;
+		if (c >= 32 && c < 127)
+			w++;
+	}
+
+	return (w);
+}
+
 static void	update_max(size_t *max, size_t w)
 {
 	if (w >= *max)
@@ -65,7 +82,7 @@ size_t	entry_display_width(const t_file *f)
 {
 	size_t	w;
 
-	w = strlen(f->name);
+	w = name_width(f->name);
 	if (g_print_inode)
 		w += g_w.inode + 1;
 	if (g_print_block_size)
