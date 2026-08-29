@@ -2,7 +2,18 @@
 
 static int	need_linkname(void)
 {
-	return (g_format == FMT_LONG);
+	return (g_format == FMT_LONG || g_print_with_color);
+}
+
+static int	need_link_mode(void)
+{
+	if (g_indicator_style == IND_CLASSIFY || g_indicator_style == IND_FILE_TYPE)
+		return (1);
+	if (!g_print_with_color)
+		return (0);
+	if (color_symlink_as_target())
+		return (1);
+	return (color_is_set(C_ORPHAN) || (color_is_set(C_MISSING) && g_format == FMT_LONG));
 }
 
 // read symlink target
@@ -83,6 +94,7 @@ void	clear_files(void)
 	while (i < g_cwd_n_used)
 		free_ent(&g_cwd_file[i++]);
 	g_cwd_n_used = 0;
+	g_any_has_acl = 0;
 }
 
 void	free_table(void)
@@ -112,18 +124,24 @@ static void	deref_cmdline_link(t_file *f, const char *path)
 }
 
 // Avoid using a lstat by file
-static int	need_stat(void)
+// d_type is often enough, ls only pays for a lstat when it really needs the
+// mode: a regular file for its exec bits (-F, colors), a directory for the
+// sticky and other-writable colors, a symlink only when a color needs the
+// target. -p and --indicator-style=file-type never need one.
+static int	need_stat(unsigned char d_type)
 {
-	if (g_format == FMT_LONG)
+	if (g_format == FMT_LONG || g_print_inode || g_print_block_size)
 		return (1);
 	if (g_sort_type == SORT_TIME || g_sort_type == SORT_SIZE)
 		return (1);
-	if (g_print_inode || g_print_block_size)
+	if (d_type == DT_UNKNOWN)
 		return (1);
-	if (g_print_with_color)
-		return (1);
-	if (g_indicator_style != IND_NONE)
-		return (1);
+	if (d_type == DT_REG)
+		return (g_print_with_color || g_indicator_style == IND_CLASSIFY);
+	if (d_type == DT_DIR)
+		return (g_print_with_color);
+	if (d_type == DT_LNK)
+		return (g_print_with_color && need_link_mode());
 	return (0);
 }
 
@@ -168,15 +186,23 @@ static t_filetype	type_from_mode(mode_t m)
 }
 
 // concanecate "dir/name"
-// avoid producing "//name"
+// avoid producing "//name", and collapse the extra slashes of an operand
+// given as "dir//" so that -R headers match ls. a name made only of slashes
+// is left alone: ls keeps the leading "//" that POSIX reserves
 char	*make_path(const char *dir, const char *name)
 {
 	size_t	dlen;
 	size_t	nlen;
 	size_t	slash;
+	size_t	cut;
 	char	*path;
 
 	dlen = strlen(dir);
+	cut = dlen;
+	while (cut > 0 && dir[cut - 1] == '/')
+		cut--;
+	if (cut > 0)
+		dlen = cut;
 	nlen = strlen(name);
 	slash = (dlen > 0 && dir[dlen - 1] != '/');
 	path = malloc(dlen + slash + nlen + 1);
@@ -196,7 +222,7 @@ static void	stat_link_target(t_file *f, const char *path)
 {
 	struct stat	target;
 
-	if (g_indicator_style != IND_CLASSIFY && g_indicator_style != IND_FILE_TYPE)
+	if (!need_link_mode())
 		return ;
 	if (stat(path, &target) != 0)
 		return ;
@@ -225,9 +251,12 @@ static int	stat_entry(t_file *f, const char *name, const char *dirname, int cmdl
 		}
 		if (cmdline && f->filetype == SYMLINK && g_deref_cmdline)
 			deref_cmdline_link(f, path);
+		acl_gobble(f, path);
 		free(path);
 		return (1);
 	}
+	if (!cmdline)
+		acl_gobble(f, path);
 	file_failure(cmdline, "cannot access", path);
 	free(path);
 	return (0);
@@ -252,7 +281,7 @@ int	gobble_file(const char *name, unsigned char d_type, const char *dirname, int
 		return (0);
 	}
 	f->filetype = type_from_dtype(d_type);
-	if (cmdline || need_stat() || f->filetype == UNKNOWN)
+	if (cmdline || need_stat(d_type) || f->filetype == UNKNOWN)
 	{
 		if (!stat_entry(f, name, dirname, cmdline) && cmdline)
 		{

@@ -1,5 +1,13 @@
 #include "ft_ls.h"
 
+// lstat may have failed, in that case fall back on the readdir type
+char	entry_indicator(const t_file *f)
+{
+	if (f->stat_ok)
+		return (file_indicator(f->st.st_mode));
+	return (file_indicator(mode_from_type(f->filetype)));
+}
+
 char	file_indicator(mode_t m)
 {
 	if (g_indicator_style == IND_NONE)

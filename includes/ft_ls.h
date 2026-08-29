@@ -15,6 +15,7 @@
 # include <time.h>
 # include <pwd.h>
 # include <grp.h>
+# include <ctype.h>
 
 # ifdef __APPLE__
 #  define ST_ATIM(s) ((s).st_atimespec)
@@ -26,11 +27,19 @@
 #  define ST_CTIM(s) ((s).st_ctim)
 # endif
 
+# ifdef __APPLE__
+#  include <sys/acl.h>
+# else
+#  include <sys/xattr.h>
+#  define ATTR_BUF_SIZE 65536
+# endif
+
 # ifdef __linux__
 #  include <sys/sysmacros.h>
 # endif
 
 # define SIX_MONTHS (31556952 / 2)
+# define TIME_WIDTH 12
 # define MIN_COL_WIDTH 3
 # define TAB_SIZE 8
 
@@ -49,6 +58,15 @@ typedef enum e_filetype
 	ARG_DIRECTORY
 }	t_filetype;
 
+// acl type
+typedef enum e_acl_type
+{
+	ACL_NONE = 0,
+	ACL_UNKNOWN,
+	ACL_CONTEXT,
+	ACL_YES
+}	t_acl_type;
+
 // sorting methods
 typedef enum e_sort_type
 {
@@ -56,7 +74,6 @@ typedef enum e_sort_type
 	SORT_EXTENSION,
 	SORT_WIDTH,
 	SORT_SIZE,
-	SORT_VERSION,
 	SORT_TIME,
 	SORT_NONE
 }	t_sort_type;
@@ -133,15 +150,23 @@ typedef struct s_file
 	mode_t		linkmode;
 	int			stat_ok;
 	int			linkok;
-	char		acl_type;
+	t_acl_type	acl_type;
 	size_t		width;
 }	t_file;
+
+// has_acl gives the '+', has_scontext gives the '.'
+// err is kept because the errno decides
+// if it is worth asking again
+typedef struct s_aclinfo
+{
+	int	has_scontext;
+	int	err;
+}	t_aclinfo;
 
 // directory using -R opt
 typedef struct s_pending
 {
 	char				*name;
-	char				*realname;
 	int					cmdline_arg;
 	struct s_pending	*next;
 }	t_pending;
@@ -158,6 +183,38 @@ typedef struct s_widths
 	size_t	major;
 	size_t	minor;
 }	t_widths;
+
+typedef enum e_color_slot
+{
+	C_LEFT,
+	C_RIGHT,
+	C_END,
+	C_RESET,
+	C_NORM,
+	C_FILE,
+	C_DIR,
+	C_LINK,
+	C_FIFO,
+	C_SOCK,
+	C_BLK,
+	C_CHR,
+	C_MISSING,
+	C_ORPHAN,
+	C_EXEC,
+	C_SETUID,
+	C_SETGID,
+	C_STICKY,
+	C_OW,
+	C_STICKY_OW,
+	C_SLOT_COUNT
+}	t_color_slot;
+
+typedef struct s_color_ext
+{
+	const char			*suffix;
+	const char			*seq;
+	struct s_color_ext *next;
+}	t_color_ext;
 
 extern t_format				g_format;
 extern t_sort_type			g_sort_type;
@@ -193,6 +250,7 @@ extern size_t				g_sorted_alloc;
 
 extern size_t				g_sorted_n_used;
 extern int					g_print_dir_name;
+extern int					g_keep_widths;
 
 extern int					g_deref_cmdline;
 
@@ -200,6 +258,8 @@ extern int					g_deref_cmdline;
 // 1 = minor error
 // 2 = error
 extern int					g_exit_status;
+
+extern int					g_any_has_acl;
 
 extern t_pending			*g_pending_dirs;
 
@@ -221,7 +281,9 @@ void						print_long_files(void);
 void						print_total(void);
 void						print_prefix(const t_file *f);
 void						compute_widths(void);
-void						mode_string(mode_t m, char *out);
+void						freeze_widths(void);
+void						mode_string(const t_file *f, char *out);
+mode_t						mode_from_type(t_filetype t);
 const char					*size_field(const t_file *f, size_t maj_w, size_t min_w);
 const char					*blocks_field(const t_file *f);
 const char					*human_size(unsigned long long size);
@@ -231,17 +293,27 @@ const char					*format_time(const struct timespec *ts);
 const char					*owner_field(const t_file *f);
 const char					*group_field(const t_file *f);
 const char					*group_name(gid_t gid);
+int							owner_is_id(const t_file *f);
+int							group_is_id(const t_file *f);
 const char					*user_name(uid_t uid);
 const struct timespec		*entry_time(const t_file *f);
 void						queue_subdirs(const char *dirname);
 char						*make_path(const char *dir, const char *name);
 void						file_failure(int cmdline, const char *msg, const char *path);
 char						file_indicator(mode_t m);
+char						entry_indicator(const t_file *f);
 size_t						print_one(const t_file *f);
 size_t						entry_display_width(const t_file *f);
 void						free_columns(void);
 void						print_many_per_line(void);
 void						print_horizontal(void);
+void						print_colored(const t_file *f, const char *name, int target);
+void						free_colors(void);
+void						color_init(void);
+int							color_is_set(t_color_slot slot);
+int							color_symlink_as_target(void);
+void						acl_gobble(t_file *f, const char *path);
+char						acl_indicator(const t_file *f);
 
 
 #endif

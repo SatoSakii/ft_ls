@@ -18,7 +18,6 @@ void	free_pending(void)
 	while (p)
 	{
 		free(p->name);
-		free(p->realname);
 		free(p);
 		p = pop_pending();
 	}
@@ -81,7 +80,9 @@ void	list_operands(int argc, char **argv, int i)
 	t_pending	*p;
 
 	n_files = argc - i;
-	if (n_files == 0)
+	if (n_files == 0 && g_immediate_dirs)
+		gobble_file(".", DT_UNKNOWN, "", 1);
+	else if (n_files == 0)
 		queue_directory(".", 1);
 	else
 		gobble_operands(argc, argv, i);
@@ -89,6 +90,7 @@ void	list_operands(int argc, char **argv, int i)
 	if (g_cwd_n_used > 0)
 	{
 		sort_files();
+		freeze_widths();
 		n_nondirs = g_sorted_n_used;
 		if (!g_immediate_dirs)
 			n_nondirs = extract_dirs_from_files();
@@ -100,12 +102,12 @@ void	list_operands(int argc, char **argv, int i)
 		if (g_pending_dirs)
 			putchar('\n');
 	}
+	g_keep_widths = 0;
 	p = pop_pending();
 	while (p)
 	{
 		print_dir(p->name, p->cmdline_arg);
 		free(p->name);
-		free(p->realname);
 		free(p);
 		p = pop_pending();
 	}
@@ -125,7 +127,6 @@ int	queue_directory(const char *name, int cmdline)
 		free(p);
 		return (0);
 	}
-	p->realname = NULL;
 	p->cmdline_arg = cmdline;
 	p->next = g_pending_dirs;
 	g_pending_dirs = p;

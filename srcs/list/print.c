@@ -5,8 +5,8 @@ size_t	print_one(const t_file *f)
 	char	c;
 
 	print_prefix(f);
-	fputs(f->name, stdout);
-	c = file_indicator(f->st.st_mode);
+	print_colored(f, f->name, 0);
+	c = entry_indicator(f);
 	if (c)
 		putchar(c);
 	return (entry_display_width(f));
@@ -16,7 +16,8 @@ void	print_current_files(void)
 {
 	size_t	i;
 
-	if (g_print_inode || g_print_block_size)
+	if ((g_print_inode || g_print_block_size) && g_format != FMT_LONG
+		&& !g_keep_widths)
 		compute_widths();
 	if (g_format == FMT_LONG)
 		return (print_long_files());
