@@ -15,6 +15,7 @@
 # include <time.h>
 # include <pwd.h>
 # include <grp.h>
+# include <ctype.h>
 
 # ifdef __APPLE__
 #  define ST_ATIM(s) ((s).st_atimespec)
