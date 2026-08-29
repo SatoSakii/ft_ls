@@ -74,6 +74,7 @@ export LC_ALL=C
 export TZ=UTC
 unset LS_COLORS COLUMNS BLOCK_SIZE TIME_STYLE QUOTING_STYLE LS_BLOCK_SIZE
 unset COLORTERM CLICOLOR
+export TERM=xterm
 
 IS_ROOT=0
 [ "$(id -u)" = "0" ] && IS_ROOT=1
@@ -281,8 +282,8 @@ check_env()
 	local cwd="$1"; shift
 	local out_ft out_gn rc_ft rc_gn
 
-	out_ft=$(cd "$cwd" && env "$var" "$FT" "$@" 2>&1); rc_ft=$?
-	out_gn=$(cd "$cwd" && env "$var" "$GNU" "$@" 2>&1); rc_gn=$?
+	out_ft=$(cd "$cwd" && env $var "$FT" "$@" 2>&1); rc_ft=$?
+	out_gn=$(cd "$cwd" && env $var "$GNU" "$@" 2>&1); rc_gn=$?
 	out_ft=$(normalise "$out_ft")
 	out_gn=$(normalise "$out_gn")
 
@@ -462,6 +463,16 @@ cat_couleurs()
 	check "$CORPUS/types" -G .
 	check_env "LS_COLORS=di=01;34" "$CORPUS/droits" --color=always -l .
 	check_env "LS_COLORS=or=31:mi=41" "$CORPUS/types" --color=always -l .
+	for c in "TERM=" "TERM=dumb" "TERM=zorglub" "TERM=xterm" "TERM=xterm-256color" \
+		"TERM=screen" "TERM=st-256color" "TERM=linux" "TERM=vt220" "TERM=Eterm" \
+		"TERM=con80x25" "TERM=xterm-direct" "TERM=rxvt-unicode" \
+		"TERM=dumb COLORTERM=truecolor" "TERM=dumb COLORTERM=" \
+		"TERM=dumb LS_COLORS=di=01;33" "TERM=zorglub LS_COLORS=" ; do
+		check_env "$c" "$CORPUS/types" --color=always .
+		check_env "$c" "$CORPUS/types" --color=always -l .
+		check_env "$c" "$CORPUS/ext" --color=always -F .
+		check_env "$c" "$CORPUS/types" -G .
+	done
 	end_cat
 }
 

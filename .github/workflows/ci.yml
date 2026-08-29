@@ -8,20 +8,44 @@ jobs:
   tests:
     name: tests
     runs-on: ubuntu-latest
+    env:
+      COREUTILS: '9.11'
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Le ls de reference est bien GNU
+      # le ls d'ubuntu est en 9.4, plus vieux que le source suivi dans
+      # docs/reference : --sort=name n'existe pas encore et -f y desactive
+      # encore -l et -s. on compare donc contre la version de reference.
+      - name: Cache du ls de reference
+        id: cache-ls
+        uses: actions/cache@v4
+        with:
+          path: ~/gnu-ls
+          key: coreutils-${{ env.COREUTILS }}-${{ runner.os }}
+
+      - name: Construction de GNU ls ${{ env.COREUTILS }}
+        if: steps.cache-ls.outputs.cache-hit != 'true'
         run: |
-          ls --version | head -1
-          ls --version | head -1 | grep -q coreutils
+          cd "$RUNNER_TEMP"
+          curl -sSfLO https://ftp.gnu.org/gnu/coreutils/coreutils-$COREUTILS.tar.xz
+          tar xf coreutils-$COREUTILS.tar.xz
+          cd coreutils-$COREUTILS
+          ./configure --quiet
+          make -j"$(nproc)" src/ls || make -j"$(nproc)"
+          mkdir -p ~/gnu-ls
+          cp src/ls ~/gnu-ls/ls
+
+      - name: Version de reference
+        run: ~/gnu-ls/ls --version | head -1
 
       - name: Compilation
         run: make
 
       - name: Suite de comparaison contre GNU ls
         run: make test
+        env:
+          GNU_LS: /home/runner/gnu-ls/ls
 
   build:
     name: build (${{ matrix.cc }})
