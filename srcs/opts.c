@@ -93,15 +93,21 @@ static void	set_line_width(void)
 {
 	unsigned long	v;
 	char			*end;
+	char			*s;
 
+	s = optarg;
+	while (isspace((unsigned char)*s))
+		s++;
 	errno = 0;
-	v = strtoul(optarg, &end, 10);
-	if (optarg[0] < '0' || optarg[0] > '9' || *end != '\0' || errno == ERANGE)
+	v = strtoul(s, &end, 0);
+	if (s == end || *end != '\0')
 	{
 		fflush(stdout);
 		fprintf(stderr, "ft_ls: invalid line width: '%s'\n", optarg);
 		exit(2);
 	}
+	if (errno == ERANGE)
+		v = ULONG_MAX;
 	g_line_length = (size_t)v;
 	g_width_set = 1;
 }
